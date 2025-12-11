@@ -9,7 +9,7 @@ class Presupuesto extends Model
     protected $fillable = [
         'user_id',
         'categoria_id',
-        'monto_asiganado',
+        'monto_asignado',
         'monto_gastado',
         'mes',
         'anio',
