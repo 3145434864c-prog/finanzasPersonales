@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Filament\Widgets;
+
+use Filament\Widgets\ChartWidget;
+use App\Models\Presupuesto;
+use Illuminate\Support\Facades\DB;
+
+
+class GastosVsPresupuestosChart extends ChartWidget
+{
+    protected static ?string $heading = 'Gastos vs Presupuestos Totales';
+
+    protected function getData(): array
+    {
+        $totalAsignado = Presupuesto::sum('monto_asignado');
+        $totalGastado = Presupuesto::sum('monto_gastado');
+
+        return [
+            'datasets' => [
+                [
+                    'data' => [$totalAsignado, $totalGastado],
+                    'backgroundColor' => [
+                        'rgb(75, 192, 192)',
+                        'rgb(255, 99, 132)',
+                    ],
+                    'borderColor' => [
+                        'rgb(75, 192, 192)',
+                        'rgb(255, 99, 132)',
+                    ],
+                ],
+            ],
+            'labels' => ['Presupuestos Asignados', 'Gastos Totales'],
+        ];
+    }
+
+    protected function getType(): string
+    {
+        return 'pie';
+    }
+}
