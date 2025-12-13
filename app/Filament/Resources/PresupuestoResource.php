@@ -49,15 +49,29 @@ class PresupuestoResource extends Resource
                             ->default(0.00)
                             ->disabled()
                             ->numeric(),
-                        Forms\Components\TextInput::make('mes')
+                        Forms\Components\Select::make('mes')
                             ->label('Mes')
                             ->required()
-                            ->maxLength(225),
+                            ->options([
+                                1 => 'Enero',
+                                2 => 'Febrero',
+                                3 => 'Marzo',
+                                4 => 'Abril',
+                                5 => 'Mayo',
+                                6 => 'Junio',
+                                7 => 'Julio',
+                                8 => 'Agosto',
+                                9 => 'Septiembre',
+                                10 => 'Octubre',
+                                11 => 'Noviembre',
+                                12 => 'Diciembre',
+                            ]),
 
                         Forms\Components\TextInput::make('anio')
                             ->label('Año')
                             ->required()
-                            ->maxLength(255),
+                            ->numeric()
+                            ->integer(),
                      ])->columns(2),
                 
             ]);
@@ -86,7 +100,24 @@ class PresupuestoResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('mes')
-                    ->searchable(),
+                    ->searchable()
+                    ->formatStateUsing(function ($state) {
+                        $meses = [
+                            1 => 'Enero',
+                            2 => 'Febrero',
+                            3 => 'Marzo',
+                            4 => 'Abril',
+                            5 => 'Mayo',
+                            6 => 'Junio',
+                            7 => 'Julio',
+                            8 => 'Agosto',
+                            9 => 'Septiembre',
+                            10 => 'Octubre',
+                            11 => 'Noviembre',
+                            12 => 'Diciembre',
+                        ];
+                        return $meses[$state] ?? $state;
+                    }),
                 Tables\Columns\TextColumn::make('anio')
                     ->label('Año')
                     ->searchable(),

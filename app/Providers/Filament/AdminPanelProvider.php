@@ -14,6 +14,9 @@ use Filament\Widgets;
 use App\Filament\Widgets\StatsOverview;
 use App\Filament\Widgets\PresupuestoChart;
 use App\Filament\Widgets\RecentMovimientos;
+use App\Filament\Widgets\GastosVsPresupuestosChart;
+use App\Filament\Widgets\BudgetAlerts;
+use App\Filament\Widgets\FinancialStatusCard;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -38,14 +41,15 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+                FinancialStatusCard::class,
                 StatsOverview::class,
-                PresupuestoChart::class,
                 RecentMovimientos::class,
+                PresupuestoChart::class,
                 GastosVsPresupuestosChart::class,
+                BudgetAlerts::class,
             ])
             ->middleware([
                 EncryptCookies::class,

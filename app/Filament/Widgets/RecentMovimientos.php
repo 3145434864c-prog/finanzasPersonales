@@ -30,10 +30,11 @@ class RecentMovimientos extends BaseWidget
                     }),
                 Tables\Columns\TextColumn::make('descripcion')
                     ->label('Descripción')
+                    ->html()
                     ->limit(30),
                 Tables\Columns\TextColumn::make('monto')
                     ->label('Monto')
-                    ->money('PEN'),
+                    ->money('COP'),
                 Tables\Columns\TextColumn::make('categoria.nombre')
                     ->label('Categoría'),
             ]);
