@@ -15,22 +15,23 @@ class GastosVsPresupuestosChart extends ChartWidget
     {
         $totalAsignado = Presupuesto::sum('monto_asignado');
         $totalGastado = Presupuesto::sum('monto_gastado');
+        $remaining = $totalAsignado - $totalGastado;
 
         return [
             'datasets' => [
                 [
-                    'data' => [$totalAsignado, $totalGastado],
+                    'data' => [$totalGastado, $remaining],
                     'backgroundColor' => [
-                        'rgb(75, 192, 192)',
                         'rgb(255, 99, 132)',
+                        'rgb(75, 192, 192)',
                     ],
                     'borderColor' => [
-                        'rgb(75, 192, 192)',
                         'rgb(255, 99, 132)',
+                        'rgb(75, 192, 192)',
                     ],
                 ],
             ],
-            'labels' => ['Presupuestos Asignados', 'Gastos Totales'],
+            'labels' => ['Gastado', 'Restante'],
         ];
     }
 

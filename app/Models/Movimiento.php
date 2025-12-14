@@ -43,9 +43,14 @@ class Movimiento extends Model
                     ->where('anio', $anio)
                     ->first();
 
-                // Si existe el presupuesto, actualizar el monto gastado
+                // Si existe el presupuesto, recalcular el monto gastado
                 if ($presupuesto) {
-                    $presupuesto->monto_gastado += $movimiento->monto;
+                    $presupuesto->monto_gastado = Movimiento::where('user_id', $movimiento->user_id)
+                        ->where('categoria_id', $movimiento->categoria_id)
+                        ->where('tipo', 'gasto')
+                        ->whereRaw('MONTH(fecha) = ?', [$mes])
+                        ->whereRaw('YEAR(fecha) = ?', [$anio])
+                        ->sum('monto');
                     $presupuesto->save();
                 }
             }
@@ -92,85 +97,43 @@ class Movimiento extends Model
                 $originalAnio == $newAnio
             );
 
-            if ($presupuestoCambio) {
-                // Si cambió el presupuesto, restar del original y sumar al nuevo
-                if ($originalTipo === 'gasto') {
-                    $presupuestoOriginal = Presupuesto::where('user_id', $movimiento->user_id)
+            // Recalcular el presupuesto original si existía
+            if ($originalTipo === 'gasto') {
+                $presupuestoOriginal = Presupuesto::where('user_id', $movimiento->user_id)
+                    ->where('categoria_id', $originalCategoriaId)
+                    ->where('mes', $originalMes)
+                    ->where('anio', $originalAnio)
+                    ->first();
+
+                if ($presupuestoOriginal) {
+                    $presupuestoOriginal->monto_gastado = Movimiento::where('user_id', $movimiento->user_id)
                         ->where('categoria_id', $originalCategoriaId)
-                        ->where('mes', $originalMes)
-                        ->where('anio', $originalAnio)
-                        ->first();
-
-                    Log::info('Presupuesto original encontrado', ['presupuesto' => $presupuestoOriginal ? $presupuestoOriginal->toArray() : null]);
-
-                    if ($presupuestoOriginal) {
-                        $presupuestoOriginal->monto_gastado -= $originalMonto;
-                        $presupuestoOriginal->save();
-                        Log::info('Presupuesto original actualizado', ['monto_gastado' => $presupuestoOriginal->monto_gastado]);
-                    }
+                        ->where('tipo', 'gasto')
+                        ->whereRaw('MONTH(fecha) = ?', [$originalMes])
+                        ->whereRaw('YEAR(fecha) = ?', [$originalAnio])
+                        ->sum('monto');
+                    $presupuestoOriginal->save();
+                    Log::info('Presupuesto original recalculado', ['monto_gastado' => $presupuestoOriginal->monto_gastado]);
                 }
+            }
 
-                if ($newTipo === 'gasto') {
-                    $presupuestoNuevo = Presupuesto::where('user_id', $movimiento->user_id)
+            // Recalcular el presupuesto nuevo si cambió o si es el mismo pero tipo cambió
+            if ($newTipo === 'gasto' || $presupuestoCambio) {
+                $presupuestoNuevo = Presupuesto::where('user_id', $movimiento->user_id)
+                    ->where('categoria_id', $newCategoriaId)
+                    ->where('mes', $newMes)
+                    ->where('anio', $newAnio)
+                    ->first();
+
+                if ($presupuestoNuevo) {
+                    $presupuestoNuevo->monto_gastado = Movimiento::where('user_id', $movimiento->user_id)
                         ->where('categoria_id', $newCategoriaId)
-                        ->where('mes', $newMes)
-                        ->where('anio', $newAnio)
-                        ->first();
-
-                    Log::info('Presupuesto nuevo encontrado', ['presupuesto' => $presupuestoNuevo ? $presupuestoNuevo->toArray() : null]);
-
-                    if ($presupuestoNuevo) {
-                        $presupuestoNuevo->monto_gastado += $newMonto;
-                        $presupuestoNuevo->save();
-                        Log::info('Presupuesto nuevo actualizado', ['monto_gastado' => $presupuestoNuevo->monto_gastado]);
-                    }
-                }
-            } else {
-                // Si es el mismo presupuesto, solo ajustar la diferencia
-                $diferencia = $newMonto - $originalMonto;
-                Log::info('Mismo presupuesto, ajustando diferencia', ['diferencia' => $diferencia]);
-
-                if ($originalTipo === 'gasto' && $newTipo === 'gasto') {
-                    // Ambos son gasto, ajustar diferencia
-                    $presupuesto = Presupuesto::where('user_id', $movimiento->user_id)
-                        ->where('categoria_id', $newCategoriaId)
-                        ->where('mes', $newMes)
-                        ->where('anio', $newAnio)
-                        ->first();
-
-                    Log::info('Presupuesto encontrado para ajuste', ['presupuesto' => $presupuesto ? $presupuesto->toArray() : null]);
-
-                    if ($presupuesto) {
-                        $presupuesto->monto_gastado += $diferencia;
-                        $presupuesto->save();
-                        Log::info('Presupuesto ajustado', ['monto_gastado' => $presupuesto->monto_gastado]);
-                    }
-                } elseif ($originalTipo === 'gasto' && $newTipo !== 'gasto') {
-                    // Cambió de gasto a no gasto, restar el original
-                    $presupuesto = Presupuesto::where('user_id', $movimiento->user_id)
-                        ->where('categoria_id', $newCategoriaId)
-                        ->where('mes', $newMes)
-                        ->where('anio', $newAnio)
-                        ->first();
-
-                    if ($presupuesto) {
-                        $presupuesto->monto_gastado -= $originalMonto;
-                        $presupuesto->save();
-                        Log::info('Cambio de gasto a no gasto, presupuesto actualizado', ['monto_gastado' => $presupuesto->monto_gastado]);
-                    }
-                } elseif ($originalTipo !== 'gasto' && $newTipo === 'gasto') {
-                    // Cambió de no gasto a gasto, sumar el nuevo
-                    $presupuesto = Presupuesto::where('user_id', $movimiento->user_id)
-                        ->where('categoria_id', $newCategoriaId)
-                        ->where('mes', $newMes)
-                        ->where('anio', $newAnio)
-                        ->first();
-
-                    if ($presupuesto) {
-                        $presupuesto->monto_gastado += $newMonto;
-                        $presupuesto->save();
-                        Log::info('Cambio de no gasto a gasto, presupuesto actualizado', ['monto_gastado' => $presupuesto->monto_gastado]);
-                    }
+                        ->where('tipo', 'gasto')
+                        ->whereRaw('MONTH(fecha) = ?', [$newMes])
+                        ->whereRaw('YEAR(fecha) = ?', [$newAnio])
+                        ->sum('monto');
+                    $presupuestoNuevo->save();
+                    Log::info('Presupuesto nuevo recalculado', ['monto_gastado' => $presupuestoNuevo->monto_gastado]);
                 }
             }
         });
@@ -190,26 +153,22 @@ class Movimiento extends Model
                 $mes = \Carbon\Carbon::parse($movimiento->fecha)->month;
                 $anio = \Carbon\Carbon::parse($movimiento->fecha)->year;
 
-                Log::info('Buscando presupuesto para restar', [
-                    'user_id' => $movimiento->user_id,
-                    'categoria_id' => $movimiento->categoria_id,
-                    'mes' => $mes,
-                    'anio' => $anio,
-                ]);
-
                 $presupuesto = Presupuesto::where('user_id', $movimiento->user_id)
                     ->where('categoria_id', $movimiento->categoria_id)
                     ->where('mes', $mes)
                     ->where('anio', $anio)
                     ->first();
 
-                Log::info('Presupuesto encontrado para restar', ['presupuesto' => $presupuesto ? $presupuesto->toArray() : null]);
-
-                // Si existe el presupuesto, restar el monto gastado
+                // Si existe el presupuesto, recalcular el monto gastado
                 if ($presupuesto) {
-                    $presupuesto->monto_gastado -= $movimiento->monto;
+                    $presupuesto->monto_gastado = Movimiento::where('user_id', $movimiento->user_id)
+                        ->where('categoria_id', $movimiento->categoria_id)
+                        ->where('tipo', 'gasto')
+                        ->whereRaw('MONTH(fecha) = ?', [$mes])
+                        ->whereRaw('YEAR(fecha) = ?', [$anio])
+                        ->sum('monto');
                     $presupuesto->save();
-                    Log::info('Presupuesto actualizado después de eliminar', ['monto_gastado' => $presupuesto->monto_gastado]);
+                    Log::info('Presupuesto recalculado después de eliminar', ['monto_gastado' => $presupuesto->monto_gastado]);
                 }
             }
         });

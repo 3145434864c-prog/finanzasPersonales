@@ -2,46 +2,40 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Widgets\Widget;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\Presupuesto;
 
-class FinancialStatusCard extends Widget
+class FinancialStatusCard extends BaseWidget
 {
-    protected static string $view = 'filament.widgets.financial-status-card';
-
-    protected int | string | array $columnSpan = 'full';
-
-    public function getTotalAsignado(): float
+    protected function getStats(): array
     {
-        return Presupuesto::sum('monto_asignado');
-    }
+        $asignado = Presupuesto::sum('monto_asignado');
+        $gastado = Presupuesto::sum('monto_gastado');
+        $diferencia = $asignado - $gastado;
 
-    public function getTotalGastado(): float
-    {
-        return Presupuesto::sum('monto_gastado');
-    }
-
-    public function getStatusMessage(): string
-    {
-        $asignado = $this->getTotalAsignado();
-        $gastado = $this->getTotalGastado();
-
-        if ($gastado > $asignado) {
-            return '¡Alerta! Estás superando el presupuesto. Revisa tus gastos inmediatamente.';
+        if ($diferencia < 0) {
+            // Exceeded budget - impactful alert
+            $color = 'danger';
+            $icon = 'heroicon-m-exclamation-triangle';
+            $description = '¡ALERTA! Has excedido tu presupuesto';
+        } elseif ($gastado > $asignado * 0.8) {
+            // Close to budget - warning
+            $color = 'warning';
+            $icon = 'heroicon-m-exclamation-circle';
+            $description = 'Cuidado: Estás cerca de tu límite presupuestario';
         } else {
-            return '¡Felicitaciones! Estás cumpliendo con tu presupuesto. ¡Sigue así!';
+            // Good - positive message
+            $color = 'success';
+            $icon = 'heroicon-m-check-circle';
+            $description = '¡Excelente! Vas bien con tu presupuesto';
         }
-    }
 
-    public function getStatusColor(): string
-    {
-        $asignado = $this->getTotalAsignado();
-        $gastado = $this->getTotalGastado();
-
-        if ($gastado >= $asignado) {
-            return 'danger';
-        } else {
-            return 'success';
-        }
+        return [
+            Stat::make('Saldo Presupuestario', 'S/ ' . number_format(abs($diferencia), 2))
+                ->description($description)
+                ->descriptionIcon($icon)
+                ->color($color),
+        ];
     }
 }

@@ -1,17 +1,13 @@
-# Dashboard Organization Task
+# TODO: Fix Negative monto_gastado Error in Presupuesto
 
-## Steps to Complete
-- [x] Reorder widgets in AdminPanelProvider.php for better flow: StatsOverview, PresupuestoChart, RecentMovimientos, GastosVsPresupuestosChart
-- [x] Test the dashboard to ensure the new organization works properly (skipped by user)
+## Completed Tasks
+- [x] Analyze the error log showing negative monto_gastado (-175000.0) after updating a Movimiento
+- [x] Identify root cause: Incremental updates assume original monto was added to presupuesto, but if movimiento predates presupuesto, it wasn't
+- [x] Fix created event: Recalculate monto_gastado by summing all movimientos instead of adding the new one
+- [x] Fix updated event: Recalculate both original and new presupuesto by summing movimientos instead of adjusting difference
+- [x] Fix deleted event: Recalculate monto_gastado by summing remaining movimientos instead of subtracting the deleted one
 
-# Budget Expense Tracking Fix
-
-## Steps to Complete
-- [x] Fix budget updates for expense movements: handle creation, update, and deletion properly
-- [x] Use movement date instead of current date for budget matching
-- [x] Handle changes in type, amount, category, and date when updating movements
-- [x] Change mes and anio columns in presupuestos table to integers for better matching
-- [x] Update PresupuestoResource form to use Select for mes and integer input for anio
-- [x] Update table display to show month names instead of numbers
-- [x] Run migration to apply database changes
-- [x] Add logging to debug budget update issues
+## Remaining Tasks
+- [ ] Test the fix by creating/updating/deleting movimientos and verifying presupuesto monto_gastado is accurate
+- [ ] Clear existing logs and monitor for new errors
+- [ ] If needed, run a script to recalculate all presupuesto monto_gastado based on current movimientos

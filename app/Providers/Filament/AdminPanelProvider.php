@@ -17,6 +17,7 @@ use App\Filament\Widgets\RecentMovimientos;
 use App\Filament\Widgets\GastosVsPresupuestosChart;
 use App\Filament\Widgets\BudgetAlerts;
 use App\Filament\Widgets\FinancialStatusCard;
+use App\Filament\Widgets\TopSpendingCategoriesChart;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -50,6 +51,7 @@ class AdminPanelProvider extends PanelProvider
                 PresupuestoChart::class,
                 GastosVsPresupuestosChart::class,
                 BudgetAlerts::class,
+                TopSpendingCategoriesChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,
