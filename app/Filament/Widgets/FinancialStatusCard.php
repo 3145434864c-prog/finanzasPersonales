@@ -8,6 +8,8 @@ use App\Models\Presupuesto;
 
 class FinancialStatusCard extends BaseWidget
 {
+    protected int|string|array $columnSpan = 12;
+
     protected function getStats(): array
     {
         $asignado = Presupuesto::sum('monto_asignado');
@@ -18,7 +20,7 @@ class FinancialStatusCard extends BaseWidget
             // Exceeded budget - impactful alert
             $color = 'danger';
             $icon = 'heroicon-m-exclamation-triangle';
-            $description = '¡ALERTA! Has excedido tu presupuesto';
+            $description = '¡ALERTA! Has excedido tu presupuesto. Revisa tus finanzas.';
         } elseif ($gastado > $asignado * 0.8) {
             // Close to budget - warning
             $color = 'warning';
@@ -32,10 +34,9 @@ class FinancialStatusCard extends BaseWidget
         }
 
         return [
-            Stat::make('Saldo Presupuestario', 'S/ ' . number_format(abs($diferencia), 2))
-                ->description($description)
-                ->descriptionIcon($icon)
-                ->color($color),
+            Stat::make('Estado del Presupuesto', $description)
+                ->color($color)
+                ->icon($icon),
         ];
     }
 }

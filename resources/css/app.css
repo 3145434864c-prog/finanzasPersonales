@@ -2,6 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Dashboard Styles */
+.filament-widget {
+    @apply shadow-lg rounded-xl border border-gray-200 bg-white;
+}
+
+.filament-widget .fi-widget-header {
+    @apply bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200;
+}
+
+.filament-widget .fi-widget-heading {
+    @apply text-lg font-semibold text-gray-800;
+}
+
+.filament-stats-overview-widget .fi-stats-overview-stat {
+    @apply bg-gradient-to-br from-white to-gray-50 border border-gray-100;
+}
+
+.filament-stats-overview-widget .fi-stats-overview-stat:hover {
+    @apply shadow-md transform scale-105 transition-all duration-200;
+}
+
+/* Chart improvements */
+.filament-chart-widget canvas {
+    @apply rounded-lg;
+}
+
+/* Table improvements */
+.filament-table-widget .fi-table {
+    @apply shadow-sm rounded-lg overflow-hidden;
+}
+
+/* Custom scrollbar */
+.filament-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.filament-sidebar::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.filament-sidebar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.filament-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';

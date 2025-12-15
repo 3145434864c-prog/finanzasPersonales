@@ -9,6 +9,8 @@ use App\Models\Presupuesto;
 
 class BudgetAlerts extends BaseWidget
 {
+    protected int|string|array $columnSpan = 12;
+
     protected static ?string $heading = 'Alertas de Presupuesto';
 
     public function table(Table $table): Table

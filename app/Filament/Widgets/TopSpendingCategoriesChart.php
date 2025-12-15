@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\DB;
 
 class TopSpendingCategoriesChart extends ChartWidget
 {
-    protected static ?string $heading = 'Categorías con Más Gastos';
+    protected int|string|array $columnSpan = 4;
+
+    protected static ?string $heading = 'Principales Categorías de Gastos';
 
     public function getDescription(): ?string
     {

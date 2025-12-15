@@ -9,6 +9,8 @@ use App\Models\Movimiento;
 
 class RecentMovimientos extends BaseWidget
 {
+    protected int|string|array $columnSpan = 12;
+
     protected static ?string $heading = 'Movimientos Recientes';
 
     public function table(Table $table): Table
@@ -34,7 +36,7 @@ class RecentMovimientos extends BaseWidget
                     ->limit(30),
                 Tables\Columns\TextColumn::make('monto')
                     ->label('Monto')
-                    ->money('COP'),
+                    ->money('PEN'),
                 Tables\Columns\TextColumn::make('categoria.nombre')
                     ->label('Categoría'),
             ]);

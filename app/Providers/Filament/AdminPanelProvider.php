@@ -3,14 +3,19 @@
 namespace App\Providers\Filament;
 
 use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Widgets\StatsOverview;
 use App\Filament\Widgets\PresupuestoChart;
 use App\Filament\Widgets\RecentMovimientos;
@@ -18,12 +23,9 @@ use App\Filament\Widgets\GastosVsPresupuestosChart;
 use App\Filament\Widgets\BudgetAlerts;
 use App\Filament\Widgets\FinancialStatusCard;
 use App\Filament\Widgets\TopSpendingCategoriesChart;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Widgets\CashFlowTrendsChart;
+use App\Filament\Pages;
+use Illuminate\Support\Facades\Auth;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -37,21 +39,20 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->topbar(function () {
+                return view('filament.topbar', [
+                    'userName' => Auth::user()?->name ?? 'Usuario',
+                ]);
+            })
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                \App\Filament\Pages\Dashboard::class,
             ])
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
-                FinancialStatusCard::class,
-                StatsOverview::class,
-                RecentMovimientos::class,
-                PresupuestoChart::class,
-                GastosVsPresupuestosChart::class,
-                BudgetAlerts::class,
-                TopSpendingCategoriesChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,
