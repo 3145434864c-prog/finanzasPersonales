@@ -25,16 +25,16 @@ class AhorroResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Información de la Meta de Ahorro')
+                Forms\Components\Section::make('Define tu Meta de Ahorro')
                     ->schema([
                         Forms\Components\Hidden::make('tipo_ahorro')
                             ->default('meta'),
                         Forms\Components\TextInput::make('nombre_meta')
-                            ->label('Nombre de la Meta')
+                            ->label('Nombre de tu Meta')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('monto_objetivo')
-                            ->label('Monto Objetivo')
+                            ->label('¿Cuánto quieres ahorrar en total?')
                             ->numeric()
                             ->required()
                             ->prefix('$')
@@ -44,19 +44,19 @@ class AhorroResource extends Resource
                                 self::calculateFechaObjetivo($set, $get);
                             }),
                         Forms\Components\RichEditor::make('descripcion')
-                            ->label('Descripción')
+                            ->label('Descripción (Opcional)')
                             ->maxLength(65535)
                             ->columnSpanFull(),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Configuración de Aportes')
+                Forms\Components\Section::make('Configura cómo ahorrarás')
                     ->schema([
                         Forms\Components\Select::make('periodicidad')
-                            ->label('Periodicidad de Aportes')
+                            ->label('¿Con qué frecuencia harás aportes?')
                             ->options([
-                                'diario' => 'Diario',
-                                'semanal' => 'Semanal',
-                                'mensual' => 'Mensual',
+                                'diario' => 'Cada día (Diario)',
+                                'semanal' => 'Cada semana (Semanal)',
+                                'mensual' => 'Cada mes (Mensual)',
                             ])
                             ->required()
                             ->reactive()
@@ -64,7 +64,7 @@ class AhorroResource extends Resource
                                 self::calculateFechaObjetivo($set, $get);
                             }),
                         Forms\Components\TextInput::make('monto_aporte')
-                            ->label('Monto por Aporte')
+                            ->label('¿Cuánto aportarás cada vez?')
                             ->numeric()
                             ->required()
                             ->prefix('$')
@@ -74,7 +74,7 @@ class AhorroResource extends Resource
                                 self::calculateFechaObjetivo($set, $get);
                             }),
                         Forms\Components\DatePicker::make('fecha_inicio')
-                            ->label('Fecha de Inicio')
+                            ->label('¿Cuándo empezarás a ahorrar?')
                             ->required()
                             ->default(now())
                             ->reactive()
