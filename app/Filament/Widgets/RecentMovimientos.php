@@ -36,7 +36,7 @@ class RecentMovimientos extends BaseWidget
                     ->limit(30),
                 Tables\Columns\TextColumn::make('monto')
                     ->label('Monto')
-                    ->money('PEN'),
+                    ->money('COP'),
                 Tables\Columns\TextColumn::make('categoria.nombre')
                     ->label('Categoría'),
             ]);

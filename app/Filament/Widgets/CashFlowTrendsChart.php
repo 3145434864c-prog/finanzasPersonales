@@ -10,11 +10,11 @@ class CashFlowTrendsChart extends ChartWidget
 {
     protected int|string|array $columnSpan = 12;
 
-    protected static ?string $heading = 'Tendencias de Flujo de Caja';
+    protected static ?string $heading = 'Resumen Financiero';
 
     public function getDescription(): ?string
     {
-        return 'Tendencias de ingresos y gastos a lo largo del tiempo.';
+        return 'ingresos y gastos a lo largo del tiempo.';
     }
 
     protected function getData(): array

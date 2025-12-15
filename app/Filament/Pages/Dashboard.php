@@ -23,8 +23,8 @@ class Dashboard extends BaseDashboard
             BudgetAlerts::class,
             RecentMovimientos::class,
             GastosVsPresupuestosChart::class,
-            CashFlowTrendsChart::class,
             TopSpendingCategoriesChart::class,
+            CashFlowTrendsChart::class,
         ];
     }
 
@@ -32,7 +32,7 @@ class Dashboard extends BaseDashboard
     {
         return [
             'md' => 2,
-            'xl' => 3,
+            'xl' => 4,
         ];
     }
 }

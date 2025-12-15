@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class GastosVsPresupuestosChart extends ChartWidget
 {
-    protected int|string|array $columnSpan = 4;
+    protected int|string|array $columnSpan = 2;
 
     protected static ?string $heading = 'Gastos vs Presupuestos Totales';
 
