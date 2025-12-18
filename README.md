@@ -34,53 +34,7 @@ Este proyecto forma parte de mi proceso de formación como desarrollador y está
 - Servidor local (XAMPP, Laragon, Laravel Sail, etc.)
 - Git
 
-## ⚙️ Instalación
-
-Sigue estos pasos para ejecutar el proyecto **en tu entorno local**:
-
-1. Clona el repositorio y entra al proyecto:
-```bash
-git clone https://github.com/3145434864c-prog/finanzasPersonales.git
-cd finanzaspersonales
-Instala las dependencias de PHP:
-
-bash
-Copiar código
-composer install
-Configura el entorno y genera la clave de la aplicación:
-
-bash
-Copiar código
-cp .env.example .env
-php artisan key:generate
-Crea la base de datos en MySQL llamada finanzaspersonales y edita .env:
-
-env
-Copiar código
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=finanzaspersonales
-DB_USERNAME=root
-DB_PASSWORD=
-Ejecuta las migraciones para crear las tablas necesarias:
-
-bash
-Copiar código
-php artisan migrate
-Inicia el servidor de desarrollo:
-
-bash
-Copiar código
-php artisan serve
-Abre en tu navegador:
-
-arduino
-Copiar código
-http://localhost:8000
-✅ El proyecto debería estar corriendo correctamente.
-
-🧪 Estado del proyecto
+## 🧪 Estado del proyecto
 📌 En desarrollo. Se agradecen sugerencias sobre:
 
 Arquitectura del proyecto
