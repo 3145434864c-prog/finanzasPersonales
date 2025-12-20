@@ -137,6 +137,32 @@ class AhorroResource extends Resource
                     ]),
             ])
             ->actions([
+                Tables\Actions\Action::make('hacer_aporte')
+                    ->label('Hacer Aporte')
+                    ->button()
+                    ->icon('heroicon-o-plus-circle')
+                    ->color('primary')
+                    ->form([
+                        Forms\Components\TextInput::make('monto_aporte')
+                            ->label('Monto del Aporte')
+                            ->numeric()
+                            ->required()
+                            ->prefix('$')
+                            ->minValue(0.01)
+                            ->maxLength(255),
+                    ])
+                    ->action(function (Ahorro $record, array $data) {
+                        $record->monto_ahorrado += $data['monto_aporte'];
+                        if ($record->monto_ahorrado >= $record->monto_objetivo) {
+                            $record->estado = 'completado';
+                        }
+                        $record->save();
+                        Notification::make()
+                            ->title('Aporte Realizado')
+                            ->body('El aporte se ha registrado exitosamente.')
+                            ->success()
+                            ->send();
+                    }),
                 Tables\Actions\EditAction::make()
                     ->button()
                     ->color('success'),
