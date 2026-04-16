@@ -73,10 +73,7 @@ class MovimientoResource extends Resource
                     ->sortable()
                     ->label('nro')
                     ->rowIndex(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('Usuario')
-                    ->searchable()
-                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('categoria.nombre')
                     ->label('Categoria')
                     ->searchable()

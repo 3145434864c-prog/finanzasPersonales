@@ -35,7 +35,8 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+->login()
+            ->brandName('Sistema de Finanzas Personales')
             ->colors([
                 'primary' => Color::Amber,
             ])

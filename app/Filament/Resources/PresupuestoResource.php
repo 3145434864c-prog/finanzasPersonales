@@ -72,6 +72,10 @@ class PresupuestoResource extends Resource
                             ->required()
                             ->numeric()
                             ->integer(),
+                        
+                        Forms\Components\DatePicker::make('fecha_limite')
+                            ->label('Fecha Límite')
+                            ->nullable(),
                      ])->columns(2),
                 
             ]);
@@ -85,10 +89,7 @@ class PresupuestoResource extends Resource
                     ->sortable()
                     ->label('nro')
                     ->rowIndex(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('Usuario')
-                    ->numeric()
-                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('categoria.nombre')
                     ->label('Categoria')
                     ->numeric()
@@ -121,6 +122,12 @@ class PresupuestoResource extends Resource
                 Tables\Columns\TextColumn::make('anio')
                     ->label('Año')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('fecha_limite')
+                    ->label('Fecha Finalización')
+                    ->date()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->color(fn ($state) => $state && $state < now() ? 'danger' : 'success'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -13,6 +13,11 @@ class Presupuesto extends Model
         'monto_gastado',
         'mes',
         'anio',
+        'fecha_limite',
+    ];
+
+    protected $casts = [
+        'fecha_limite' => 'date',
     ];
 
     //relacion de muchos a uno con el modelo usuario
@@ -25,5 +30,13 @@ class Presupuesto extends Model
     public function categoria()
     {
         return $this->belongsTo(Categoria::class);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereNull('fecha_limite')
+              ->orWhere('fecha_limite', '>=', now()->startOfDay());
+        });
     }
 }

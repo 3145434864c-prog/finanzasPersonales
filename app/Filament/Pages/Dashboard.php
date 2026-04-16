@@ -18,7 +18,7 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            FinancialStatusCard::class,
+            DashboardHeader::class,
             StatsOverview::class,
             BudgetAlerts::class,
             RecentMovimientos::class,

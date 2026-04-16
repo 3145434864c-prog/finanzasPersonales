@@ -20,11 +20,11 @@ class GastosVsPresupuestosChart extends ChartWidget
         $currentYear = now()->year;
         $userId = auth()->id() ?? 1;
 
-        $totalAsignado = Presupuesto::where('mes', $currentMonth)
+        $totalAsignado = Presupuesto::active()->where('mes', $currentMonth)
                                     ->where('anio', $currentYear)
                                     ->when($userId, fn($query) => $query->where('user_id', $userId))
                                     ->sum('monto_asignado');
-        $totalGastado = Presupuesto::where('mes', $currentMonth)
+        $totalGastado = Presupuesto::active()->where('mes', $currentMonth)
                                    ->where('anio', $currentYear)
                                    ->when($userId, fn($query) => $query->where('user_id', $userId))
                                    ->sum('monto_gastado');
@@ -41,11 +41,11 @@ class GastosVsPresupuestosChart extends ChartWidget
         $currentYear = now()->year;
         $userId = auth()->id() ?? 1;
 
-        $totalAsignado = Presupuesto::where('mes', $currentMonth)
+        $totalAsignado = Presupuesto::active()->where('mes', $currentMonth)
                                     ->where('anio', $currentYear)
                                     ->when($userId, fn($query) => $query->where('user_id', $userId))
                                     ->sum('monto_asignado');
-        $totalGastado = Presupuesto::where('mes', $currentMonth)
+        $totalGastado = Presupuesto::active()->where('mes', $currentMonth)
                                    ->where('anio', $currentYear)
                                    ->when($userId, fn($query) => $query->where('user_id', $userId))
                                    ->sum('monto_gastado');

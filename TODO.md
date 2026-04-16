@@ -1,1 +1,12 @@
-# Task: Change default route from welcome to admin/login\n\n## Steps:\n1. [x] Create TODO.md\n2. [x] Edit routes/web.php\n3. [x] Clear route cache\n4. [ ] Test redirect\n5. [x] Mark complete
+# Previous Task: Header Dark Mode - COMPLETE ✅
+
+# New Task: Enhance "Informe de Presupuesto" (add/prominent "el Presupuesto supera saldo disponible")
+
+**Status:** Text already exists in StatsOverview.php!
+
+## Plan:
+1. Enhance Stat styling for exceeded budgets (red highlight)
+2. php artisan filament:cache-components
+3. Test
+
+**Current Progress: Step 1**

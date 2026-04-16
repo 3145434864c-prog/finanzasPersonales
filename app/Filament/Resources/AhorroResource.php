@@ -112,15 +112,18 @@ class AhorroResource extends Resource
                     ->label('Fecha Objetivo')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('estado')
+                Tables\Columns\BadgeColumn::make('estado')
                     ->label('Estado')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'activo' => 'success',
-                        'completado' => 'gray',
-                        'cancelado' => 'danger',
-                        default => 'gray',
-                    }),
+                    ->colors([
+                        'danger' => fn ($state) => $state === 'activo' && $state->monto_ahorrado < $state->monto_objetivo,
+                        'primary' => fn ($state) => $state === 'completado' || $state->monto_ahorrado >= $state->monto_objetivo,
+                        'gray' => fn ($state) => $state === 'cancelado',
+                    ])
+                    ->icons([
+                        'danger' => 'heroicon-m-x-circle',
+                        'primary' => 'heroicon-m-check-circle',
+                        'gray' => 'heroicon-m-ban',
+                    ]),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('estado')

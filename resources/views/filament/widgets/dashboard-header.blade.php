@@ -1,34 +1,15 @@
 <x-filament-widgets::widget class="dashboard-header-widget">
-    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-xl shadow-lg">
+    <div class="bg-white/80 dark:bg-gradient-to-r dark:from-slate-900/95 dark:to-purple-900 backdrop-blur-sm dark:backdrop-blur-none text-gray-900 dark:text-white p-6 rounded-xl shadow-lg shadow-black/10 dark:shadow-2xl dark:shadow-slate-950/40 transition-all duration-500 border border-gray-200/50 dark:border-slate-800/50 hover:shadow-xl hover:shadow-black/20 dark:hover:shadow-2xl dark:hover:shadow-black">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between">
             <div class="mb-4 md:mb-0">
                 <h1 class="text-2xl font-bold mb-2">
                     ¡Hola, {{ $this->getUserName() }}!
                 </h1>
-                <p class="text-blue-100">
-                    Bienvenido a tu panel de finanzas personales - {{ $this->getCurrentMonth() }} {{ now()->year }}
+                <p class="text-blue-600/80 dark:text-blue-300">
+                    Bienvenido de nuevo - {{ now()->format('d') }} de {{ $this->getCurrentMonth() }} {{ now()->year }}
                 </p>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                    <div class="text-2xl font-bold">{{ $this->getTotalMovements() }}</div>
-                    <div class="text-sm text-blue-100">Movimientos</div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                    <div class="text-2xl font-bold">S/ {{ number_format($this->getTotalAssigned(), 0) }}</div>
-                    <div class="text-sm text-blue-100">Presupuestado</div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                    <div class="text-2xl font-bold">S/ {{ number_format($this->getTotalSpent(), 0) }}</div>
-                    <div class="text-sm text-blue-100">Gastado</div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                    <div class="text-2xl font-bold {{ $this->getSavingsRate() >= 0 ? 'text-green-300' : 'text-red-300' }}">
-                        {{ $this->getSavingsRate() }}%
-                    </div>
-                    <div class="text-sm text-blue-100">Ahorro</div>
-                </div>
-            </div>
+            
         </div>
     </div>
 </x-filament-widgets::widget>
