@@ -17,7 +17,7 @@ class BudgetAlerts extends BaseWidget
     {
         return $table
             ->query(
-                Presupuesto::where('monto_gastado', '>', 'monto_asignado')->with('categoria')
+                Presupuesto::where('mes', now()->month)->where('anio', now()->year)->with('categoria')
             )
             ->columns([
                 Tables\Columns\TextColumn::make('categoria.nombre')
@@ -33,8 +33,8 @@ class BudgetAlerts extends BaseWidget
                     ->sortable(),
                 Tables\Columns\TextColumn::make('diferencia')
                     ->label('Diferencia (Asignado - Gastado)')
-                    ->money('COP')
                     ->getStateUsing(fn (Presupuesto $record): float => $record->monto_asignado - $record->monto_gastado)
+                    ->formatStateUsing(fn (float $state): string => $state >= 0 ? 'te queda ' . number_format($state, 0, ',', '.') . ' COP del presupuesto' : 'superaste por ' . number_format(abs($state), 0, ',', '.') . ' COP este presupuesto')
                     ->color(fn (float $state): string => $state < 0 ? 'danger' : 'success'),
             ])
             ->defaultSort('monto_gastado', 'desc');

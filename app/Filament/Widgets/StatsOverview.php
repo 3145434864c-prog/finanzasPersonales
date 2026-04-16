@@ -6,6 +6,7 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\Presupuesto;
 use App\Models\Movimiento;
+use App\Models\Ahorro;
 
 class StatsOverview extends BaseWidget
 {
@@ -31,9 +32,16 @@ class StatsOverview extends BaseWidget
         $currentMonthSpent = $budgetData->current_month_spent ?? 0;
         $prevMonthSpent = $budgetData->prev_month_spent ?? 0;
 
-        $savingsRate = $totalAsignado > 0 ? round((($totalAsignado - $totalGastado) / $totalAsignado) * 100, 1) : 0;
+        $savingsData = Ahorro::selectRaw('SUM(monto_ahorrado) as total_actual, SUM(monto_objetivo) as total_objetivo')->whereYear('created_at', now()->year)->first();
+        $savingsProgress = $savingsData->total_objetivo > 0 ? round(($savingsData->total_actual / $savingsData->total_objetivo) * 100, 1) : 0;
+        $savingsRate = $savingsProgress;
         $expenseRatio = $totalAsignado > 0 ? round(($totalGastado / $totalAsignado) * 100, 1) : 0;
-        $monthlyTrend = $prevMonthSpent > 0 ? round((($currentMonthSpent - $prevMonthSpent) / $prevMonthSpent) * 100, 1) : 0;
+$monthlyTrend = $prevMonthSpent > 0 ? round((($currentMonthSpent - $prevMonthSpent) / $prevMonthSpent) * 100, 1) : 0;
+
+        // Calculate real saldo disponible from movimientos (mes actual)
+        $movData = Movimiento::selectRaw("SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END) as total_ingresos, SUM(CASE WHEN tipo = 'gasto' THEN monto ELSE 0 END) as total_gastos")->whereMonth('fecha', now()->month)->whereYear('fecha', now()->year)->first();
+        $aportesMes = Ahorro::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->sum('monto_ahorrado');
+        $saldoReal = ($movData->total_ingresos ?? 0) - (($movData->total_gastos ?? 0) + ($aportesMes ?? 0));
 
         return [
             Stat::make('Total Presupuestos', Presupuesto::count())
@@ -47,9 +55,9 @@ class StatsOverview extends BaseWidget
                 ->color('info'),
 
             Stat::make('Tasa de Ahorro', $savingsRate . '%')
-                ->description('Porcentaje de presupuesto no gastado')
+                ->description('Porcentaje de metas de ahorro completadas')
                 ->descriptionIcon('heroicon-o-arrow-trending-up')
-                ->color($savingsRate >= 20 ? 'success' : ($savingsRate >= 10 ? 'warning' : 'danger')),
+                ->color($savingsRate >= 80 ? 'success' : ($savingsRate >= 50 ? 'warning' : 'danger')),
 
             Stat::make('Ratio de Gastos', $expenseRatio . '%')
                 ->description('Porcentaje del presupuesto utilizado')
@@ -61,10 +69,10 @@ class StatsOverview extends BaseWidget
                 ->descriptionIcon($monthlyTrend <= 0 ? 'heroicon-o-arrow-trending-down' : 'heroicon-o-arrow-trending-up')
                 ->color($monthlyTrend <= 0 ? 'success' : 'danger'),
 
-            Stat::make('Saldo Disponible', 'S/ ' . number_format($totalAsignado - $totalGastado, 2))
-                ->description('Actualmente es tu presupuesto total disponible')
+            Stat::make('Saldo Disponible', 'S/ ' . number_format($saldoReal, 2))
+                ->description('Dinero disponible actualmente')
                 ->descriptionIcon('heroicon-m-banknotes')
-                ->color(($totalAsignado - $totalGastado) >= 0 ? 'success' : 'danger'),
+                ->color($saldoReal >= 0 ? 'success' : 'danger'),
         ];
     }
 }

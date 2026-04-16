@@ -4,7 +4,8 @@ namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
 use App\Models\Presupuesto;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
+
 
 
 class GastosVsPresupuestosChart extends ChartWidget
@@ -15,8 +16,18 @@ class GastosVsPresupuestosChart extends ChartWidget
 
     public function getDescription(): ?string
     {
-        $totalAsignado = Presupuesto::sum('monto_asignado');
-        $totalGastado = Presupuesto::sum('monto_gastado');
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+        $userId = auth()->id() ?? 1;
+
+        $totalAsignado = Presupuesto::where('mes', $currentMonth)
+                                    ->where('anio', $currentYear)
+                                    ->when($userId, fn($query) => $query->where('user_id', $userId))
+                                    ->sum('monto_asignado');
+        $totalGastado = Presupuesto::where('mes', $currentMonth)
+                                   ->where('anio', $currentYear)
+                                   ->when($userId, fn($query) => $query->where('user_id', $userId))
+                                   ->sum('monto_gastado');
         $porcentajeGastado = $totalAsignado > 0 ? round(($totalGastado / $totalAsignado) * 100, 1) : 0;
 
         return "Has utilizado {$porcentajeGastado}% de tu presupuesto total. " .
@@ -26,8 +37,18 @@ class GastosVsPresupuestosChart extends ChartWidget
 
     protected function getData(): array
     {
-        $totalAsignado = Presupuesto::sum('monto_asignado');
-        $totalGastado = Presupuesto::sum('monto_gastado');
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+        $userId = auth()->id() ?? 1;
+
+        $totalAsignado = Presupuesto::where('mes', $currentMonth)
+                                    ->where('anio', $currentYear)
+                                    ->when($userId, fn($query) => $query->where('user_id', $userId))
+                                    ->sum('monto_asignado');
+        $totalGastado = Presupuesto::where('mes', $currentMonth)
+                                   ->where('anio', $currentYear)
+                                   ->when($userId, fn($query) => $query->where('user_id', $userId))
+                                   ->sum('monto_gastado');
         $remaining = max(0, $totalAsignado - $totalGastado);
 
         return [
